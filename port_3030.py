@@ -17,7 +17,7 @@ TCP_IP = ''
 # Define port to listen on
 TCP_PORT = 3030
 
-# Define maximum amount of simultaneous threads
+# Define max parallel threads
 QUEUE = 10
 
 # Define the maximum buffer size for incomming connections (in bytes)
@@ -26,7 +26,7 @@ BUFFER = 256
 # Define the path to the log file to be generated
 LOGPATH = "/home/vgate/sinkholing/log.csv"
 
-# Define the first few bytes of the traffic to validate. By default, this script will
+# Define the first few bytes of the stream to validate. By default, this script will
 # validate if the stream STARTS with these bytes. This behaviour could be modified in
 # validateBuffer() method.
 SIGNATURE = "5b2d5d7c"
@@ -35,7 +35,7 @@ SIGNATURE = "5b2d5d7c"
 FAMILY = "VictoryGate.A"
 
 # Finally, the public IP address is resolved dynamically querying ipinfo.io API (below). If for
-# whatever reason this is not possible, set the variable PUBLIC_IP manually.
+# whatever reason this is not possible, set the variable PUBLIC_IP manually. For logging purposes only.
 
 
 class MultiThreading(object):
