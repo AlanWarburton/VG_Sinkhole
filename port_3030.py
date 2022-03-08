@@ -113,16 +113,18 @@ class MultiThreading:
             finally:
                 client.close()
 
-try:
-    url = "https://ipinfo.io/json"
-    response = urllib2.urlopen(url)
-    data = json.load(response)
-    PUBLIC_IP = data['ip']
-    MultiThreading(TCP_IP, TCP_PORT).listen()
-except KeyboardInterrupt:
-    print ("\nShutting down server on user interrupt... Wait for all threads to finalize")
-    raise SystemExit()
-except Exception as e:
-    print ("\n[!] Unexpected error:\n")
-    print (e)
-    raise SystemExit()
+
+if __name__ == "__main__":
+    try:
+        url = "https://ipinfo.io/json"
+        response = urllib2.urlopen(url)
+        data = json.load(response)
+        PUBLIC_IP = data['ip']
+        MultiThreading(TCP_IP, TCP_PORT).listen()
+    except KeyboardInterrupt:
+        print ("\nShutting down server on user interrupt... Wait for all threads to finalize")
+        raise SystemExit()
+    except Exception as e:
+        print ("\n[!] Unexpected error:\n")
+        print (e)
+        raise SystemExit()
