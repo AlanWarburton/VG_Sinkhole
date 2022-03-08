@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
+import binascii
+import csv
+import json
+from multiprocessing import Process, Lock
 import os
 import re
-import csv
-import time
-import json
 import socket
-import binascii
-import threading
 import subprocess
-from multiprocessing import Process, Lock
+import time
+import threading
+
 
 # Define interface to listen on. Leave blank to listen on all interfaces.
 TCP_IP = ''
@@ -38,7 +39,7 @@ FAMILY = "VictoryGate.A"
 # whatever reason this is not possible, set the variable PUBLIC_IP manually. For logging purposes only.
 
 
-class MultiThreading(object):
+class MultiThreading:
     def __init__(self, ip, port):
         self.ip = ip
         self.port = port
@@ -51,11 +52,10 @@ class MultiThreading(object):
         while True:
             client, ip = self.server_socket.accept()
             client.settimeout(20)
-            threading.Thread(target = self.newClient,args = (client, ip)).start()
+            threading.Thread(target = self.newClient, args = (client, ip)).start()
 
     def logger(self, raddr, rport):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-        timestamp = '"%s"' % timestamp
         columns = "timestamp", "ip", "port", "cc_ip", "cc_port", "infection"
         localPort = self.port
         localAddr = PUBLIC_IP
@@ -76,7 +76,8 @@ class MultiThreading(object):
             except:
                 mutex.release()
 
-    def stringToHex(self, unicode):
+    @staticmethod
+    def stringToHex(unicode):
         bytes = bytearray(unicode)
         hex = binascii.hexlify(bytes)
         return hex
@@ -85,10 +86,10 @@ class MultiThreading(object):
         received = self.stringToHex(recv_buffer)
         if received.startswith(SIGNATURE):
             return True
-        else:
-            return False
+        return False
 
-    def prohibitNewConn(self, ip_addr, mutex):
+    @staticmethod
+    def prohibitNewConn(ip_addr, mutex):
         try:
             p = subprocess.Popen(["sudo", "iptables", "-w", "-A", "INPUT", "-s", ip_addr, "-j", "DROP"], stdout=subprocess.PIPE)
             p.communicate()
@@ -101,17 +102,16 @@ class MultiThreading(object):
             try:
                 msg = client.recv(BUFFER)
                 if self.validateBuffer(msg):
-                    client_ip = ip[0]
-                    client_port = ip[1]
+                    client_ip, client_port = ip
                     self.logger(client_ip, client_port)
-                    client.close()
                 else:
                     self.prohibitNewConn(client_ip)
-                    client.close()
                     return False
             except:
-                client.close()
                 return False
+            
+            finally:
+                client.close()
 
 try:
     url = "https://ipinfo.io/json"
