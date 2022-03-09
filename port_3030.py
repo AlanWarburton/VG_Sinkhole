@@ -105,7 +105,7 @@ class Server:
         while True:
             try:
                 msg = client.recv(BUFFER)
-                if Herlpers.validateBuffer(msg):
+                if Helpers.validateBuffer(msg):
                     client_ip, client_port = ip
                     Helpers.logger(client_ip, client_port, self.port)
                 else:
